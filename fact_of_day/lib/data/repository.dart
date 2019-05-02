@@ -1,12 +1,13 @@
-import 'fact.dart';
-import 'api.dart';
 import 'dart:async';
 import 'dart:convert';
 
-class Repository {
-  Future<Fact> getRandom() async {
-    final response = await API.getRandomFact("de");
+import 'api.dart';
+import 'fact.dart';
 
+class Repository {
+  Future<Fact> getRandom(String languageCode) async {
+    final response = await API.getRandomFact(languageCode);
+    print(languageCode);
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON
       return Fact.fromJson(json.decode(response.body));

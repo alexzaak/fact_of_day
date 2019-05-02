@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-
-List<Color> bgcolors =[
+List<Color> bgcolors = [
   Colors.indigo,
   Colors.purple,
   Colors.redAccent,

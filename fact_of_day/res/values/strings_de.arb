@@ -1,0 +1,5 @@
+{
+  "hello": "Hallo!",
+  "greetTo": "Nice to meet you, $name!",
+  "title": "Hast du gewusst?"
+}

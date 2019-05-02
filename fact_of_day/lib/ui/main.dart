@@ -1,26 +1,63 @@
-import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'data/repository.dart';
-import 'data/fact.dart';
-import 'colors.dart';
+import 'package:fact_of_day/data/fact.dart';
+import 'package:fact_of_day/generated/i18n.dart';
+import 'package:fact_of_day/ui/colors.dart';
+import 'package:fact_of_day/ui/viewmodel.dart';
+import 'package:flutter/material.dart';
 
-void main() => runApp(new MaterialApp(
-      home: new Home(),
-      debugShowCheckedModeBanner: false,
-    ));
-
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => new _HomeState();
+void main() async {
+  runApp(App());
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> with SingleTickerProviderStateMixin {
+  String _locale = 'en';
+
+  Future<void> _setLocale() async {
+    final String lang = await ViewModel().getLanguageCode();
+    print(lang);
+    setState(() {
+      _locale = lang;
+    });
+  }
+
+  initState() {
+    super.initState();
+    _setLocale();
+  }
+
+  dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+        locale: Locale(_locale, ""),
+        localizationsDelegates: [S.delegate],
+        supportedLocales: S.delegate.supportedLocales,
+        localeResolutionCallback:
+            S.delegate.resolution(fallback: new Locale("en", "")),
+        home: AppBody());
+  }
+}
+
+class AppBody extends StatefulWidget {
+  @override
+  _AppBody createState() => _AppBody();
+}
+
+class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
   Animation animation;
   AnimationController animationController;
   Fact fact;
 
-  _getfact() {
-    Repository().getRandom().then((response) {
+  Future<void> _getFact() async {
+    ViewModel().getFact().then((response) {
       setState(() {
         fact = response;
         animationController.reset();
@@ -39,7 +76,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       this.setState(() {});
     });
     animationController.forward();
-    _getfact();
+    _getFact();
   }
 
   dispose() {
@@ -55,8 +92,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           body: new Padding(
             padding: const EdgeInsets.symmetric(vertical: 75.0),
             child: new AutoSizeText(
-              "Loading",
-              style: new TextStyle(color: Colors.white, fontSize: 45.0),
+              S.of(context).hello,
+              style: new TextStyle(color: Colors.white10, fontSize: 45.0),
             ),
           ));
     } else {
@@ -73,7 +110,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     child: new Padding(
                       padding: const EdgeInsets.only(left: 30.0),
                       child: new AutoSizeText(
-                        "Did you Know?",
+                        S.of(context).title,
                         style:
                             new TextStyle(color: Colors.white, fontSize: 45.0),
                       ),
