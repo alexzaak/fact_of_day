@@ -2,67 +2,27 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fact_of_day/data/fact.dart';
 import 'package:fact_of_day/generated/i18n.dart';
 import 'package:fact_of_day/ui/colors.dart';
-import 'package:fact_of_day/ui/fact_of_day/fact_of_day.dart';
-import 'package:fact_of_day/ui/favorites/favorite_page.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-void main() async {
-  runApp(App());
-}
+typedef void CustomCallback(String value);
 
-class App extends StatefulWidget {
+class FactOfDayScreen extends StatefulWidget {
   @override
-  _AppState createState() => _AppState();
+  _FactOfDayScreen createState() => _FactOfDayScreen();
 }
 
-class _AppState extends State<App> with SingleTickerProviderStateMixin {
-  String _locale = 'en';
-
-  Future<void> _setLocale() async {
-    final String lang = await ViewModel().getLanguageCode();
-    print(lang);
-    setState(() {
-      _locale = lang;
-    });
-  }
-
-  initState() {
-    super.initState();
-    _setLocale();
-  }
-
-  dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-        locale: Locale(_locale, ""),
-        localizationsDelegates: [S.delegate],
-        supportedLocales: S.delegate.supportedLocales,
-        localeResolutionCallback:
-            S.delegate.resolution(fallback: new Locale("en", "")),
-        home: AppBody());
-  }
-}
-
-class AppBody extends StatefulWidget {
-  @override
-  _AppBody createState() => _AppBody();
-}
-
-class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
+class _FactOfDayScreen extends State<FactOfDayScreen>
+    with SingleTickerProviderStateMixin {
   Animation animation;
   AnimationController animationController;
   Fact fact;
   Icon favoriteIcon = Icon(Icons.favorite_border);
 
   Future<void> _getFact() async {
-    ViewModel().getFact().then((response) {
+    ViewModel().getFactOfDay().then((response) {
       setState(() {
         fact = response;
         _setFavoriteIcon(fact.text);
@@ -115,70 +75,13 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (fact == null) {
-      return new Scaffold(
-          backgroundColor: dispcolor,
-          body: new Center(
-            child: new AutoSizeText(
-              S.of(context).hello,
-              minFontSize: 60.0,
-              maxFontSize: 120.0,
-              style: new TextStyle(color: Colors.white, fontSize: 120.0),
-            ),
-          ));
+      return new Scaffold(backgroundColor: dispcolor);
     } else {
       return new Scaffold(
         backgroundColor: dispcolor,
         appBar: new AppBar(
           elevation: 0.0,
           backgroundColor: dispcolor.withOpacity(0.5),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(
-                  Icons.favorite,
-                  color: Colors.teal,
-                ),
-                title: Text(S.of(context).favorites,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => FavoriteScreen()));
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.today,
-                  color: Colors.teal,
-                ),
-                title: Text(S.of(context).fact_of_day,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => FactOfDayScreen()));
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.star, color: Colors.teal),
-                title: Text(S.of(context).rate_me,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () => _launchURL(
-                    "https://play.google.com/store/apps/details?id=codes.zaak.architecturesample"),
-              ),
-            ],
-          ),
         ),
         body: Builder(
           builder: (context) => new Column(
@@ -251,7 +154,8 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                                               Share.share(fact.text)),
                                       new IconButton(
                                           icon: favoriteIcon,
-                                          tooltip: S.of(context).add_to_favorite,
+                                          tooltip:
+                                              S.of(context).add_to_favorite,
                                           onPressed: () => {
                                                 ViewModel()
                                                     .toggleFavorite(fact.text),

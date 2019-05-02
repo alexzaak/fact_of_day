@@ -12,17 +12,20 @@ class S implements WidgetsLocalizations {
   const S();
 
   static const GeneratedLocalizationsDelegate delegate =
-      GeneratedLocalizationsDelegate();
+    GeneratedLocalizationsDelegate();
 
   static S of(BuildContext context) => Localizations.of<S>(context, S);
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get add_to_favorite => "Add fact to the favorites";
+  String get fact_of_day => "Fact of the day";
+  String get favorites => "Favorites";
   String get hello => "Hello!";
-
+  String get rate_me => "Rate me";
+  String get share_the_fact => "Share fact";
   String get title => "Did you know?";
-
   String source(String source) => "Source: $source";
 }
 
@@ -33,11 +36,19 @@ class $de extends S {
   TextDirection get textDirection => TextDirection.ltr;
 
   @override
+  String get favorites => "Favoriten";
+  @override
+  String get fact_of_day => "Fakt des Tages";
+  @override
+  String get add_to_favorite => "Fakt zu Favoriten hinzufügen";
+  @override
+  String get rate_me => "Bewerte mich";
+  @override
   String get hello => "Hallo!";
-
   @override
   String get title => "Hast du gewusst?";
-
+  @override
+  String get share_the_fact => "Fakt teilen";
   @override
   String source(String source) => "Quelle: $source";
 }
@@ -56,8 +67,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     ];
   }
 
-  LocaleListResolutionCallback listResolution(
-      {Locale fallback, bool withCountry = true}) {
+  LocaleListResolutionCallback listResolution({Locale fallback, bool withCountry = true}) {
     return (List<Locale> locales, Iterable<Locale> supported) {
       if (locales == null || locales.isEmpty) {
         return fallback ?? supported.first;
@@ -67,8 +77,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
     };
   }
 
-  LocaleResolutionCallback resolution(
-      {Locale fallback, bool withCountry = true}) {
+  LocaleResolutionCallback resolution({Locale fallback, bool withCountry = true}) {
     return (Locale locale, Iterable<Locale> supported) {
       return _resolve(locale, fallback, supported, withCountry);
     };
@@ -84,7 +93,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
         case "en":
           return SynchronousFuture<S>(const $en());
         default:
-        // NO-OP.
+          // NO-OP.
       }
     }
     return SynchronousFuture<S>(const S());
@@ -99,8 +108,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
   ///
   /// Internal method to resolve a locale from a list of locales.
   ///
-  Locale _resolve(Locale locale, Locale fallback, Iterable<Locale> supported,
-      bool withCountry) {
+  Locale _resolve(Locale locale, Locale fallback, Iterable<Locale> supported, bool withCountry) {
     if (locale == null || !_isSupported(locale, withCountry)) {
       return fallback ?? supported.first;
     }
@@ -133,9 +141,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
         }
 
         // If no country requirement is requested, check if this locale has no country.
-        if (true != withCountry &&
-            (supportedLocale.countryCode == null ||
-                supportedLocale.countryCode.isEmpty)) {
+        if (true != withCountry && (supportedLocale.countryCode == null || supportedLocale.countryCode.isEmpty)) {
           return true;
         }
       }
@@ -145,7 +151,7 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
 }
 
 String getLang(Locale l) => l == null
-    ? null
-    : l.countryCode != null && l.countryCode.isEmpty
-        ? l.languageCode
-        : l.toString();
+  ? null
+  : l.countryCode != null && l.countryCode.isEmpty
+    ? l.languageCode
+    : l.toString();

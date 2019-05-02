@@ -34,6 +34,11 @@ class ViewModel {
     return await Repository().getRandom(languageCode);
   }
 
+  Future<Fact> getFactOfDay() async {
+    String languageCode = await getLanguageCode();
+    return await Repository().getFactOfDay(languageCode);
+  }
+
   void toggleFavorite(String text) async {
     final String key = FAV_PREFIX + text.hashCode.toString();
     print(key);

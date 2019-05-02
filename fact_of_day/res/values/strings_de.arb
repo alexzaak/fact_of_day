@@ -1,5 +1,10 @@
 {
   "hello": "Hallo!",
   "title": "Hast du gewusst?",
-  "source": "Quelle: $source"
+  "source": "Quelle: $source",
+  "fact_of_day": "Fakt des Tages",
+  "favorites": "Favoriten",
+  "rate_me": "Bewerte mich",
+  "share_the_fact": "Fakt teilen",
+  "add_to_favorite": "Fakt zu Favoriten hinzufügen"
 }

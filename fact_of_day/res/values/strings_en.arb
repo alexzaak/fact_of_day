@@ -1,5 +1,10 @@
 {
   "hello": "Hello!",
   "title": "Did you know?",
-  "source": "Source: $source"
+  "source": "Source: $source",
+  "fact_of_day": "Fact of the day",
+  "favorites": "Favorites",
+  "rate_me": "Rate me",
+  "share_the_fact": "Share fact",
+  "add_to_favorite": "Add fact to the favorites"
 }
