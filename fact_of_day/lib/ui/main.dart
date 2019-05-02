@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fact_of_day/data/fact.dart';
 import 'package:fact_of_day/generated/i18n.dart';
 import 'package:fact_of_day/ui/colors.dart';
+import 'package:fact_of_day/ui/favorites/favorite_page.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -57,11 +58,13 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
   Animation animation;
   AnimationController animationController;
   Fact fact;
+  Icon favoriteIcon = Icon(Icons.favorite_border);
 
   Future<void> _getFact() async {
     ViewModel().getFact().then((response) {
       setState(() {
         fact = response;
+        _setFavoriteIcon(fact.text);
         animationController.reset();
         animationController.forward();
       });
@@ -75,6 +78,19 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
     } else {
       print('Could not launch $url');
     }
+  }
+
+  _setFavoriteIcon(String text) async {
+    if(await ViewModel().isFavorite(text)) {
+      setState(() {
+        favoriteIcon = Icon(Icons.favorite);
+      });
+      return;
+    }
+
+    setState(() {
+      favoriteIcon = Icon(Icons.favorite_border);
+    });
   }
 
   initState() {
@@ -111,6 +127,31 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
     } else {
       return new Scaffold(
         backgroundColor: dispcolor,
+        appBar: AppBar(
+          title: Text("Drawer app"),
+        ),
+          drawer: Drawer(
+            child: ListView(
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.favorite),
+                  title: Text("Favorites"),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => FavoriteScreen()));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.star),
+                  title: Text("Rate me"),
+                  trailing: Icon(Icons.arrow_forward),
+                  onTap: () => _launchURL("https://play.google.com/store/apps/details?id=codes.zaak.architecturesample"),
+                ),
+              ],
+            ),
+          ),
         body: new Padding(
           padding: const EdgeInsets.symmetric(vertical: 75.0),
           child: new Center(
@@ -178,10 +219,12 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     new IconButton(
-                                        icon: Icon(Icons.favorite),
+                                        icon:favoriteIcon,
                                         tooltip: 'Increase volume by 10',
-                                        onPressed: () => ViewModel()
-                                            .saveAsFavorite(fact.text)),
+                                        onPressed: () => {
+                                          ViewModel().toggleFavorite(fact.text),
+                                          _setFavoriteIcon(fact.text)
+                                        }),
                                     new IconButton(
                                         icon: Icon(Icons.share),
                                         tooltip: 'Increase volume by 10',

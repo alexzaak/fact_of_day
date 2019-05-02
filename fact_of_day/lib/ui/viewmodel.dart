@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewModel {
   static const String FAVORITE_LIST = "pref_favorite_list";
+  static const String FAV_PREFIX = "pref_fav_";
 
   Future<String> getLanguageCode() async {
     String myLanguage;
@@ -33,25 +34,43 @@ class ViewModel {
     return await Repository().getRandom(languageCode);
   }
 
-  void saveAsFavorite(String text) async {
-    List<String> favorites = new List();
-    favorites.add(text);
+  void toggleFavorite(String text) async {
+    final String key = FAV_PREFIX + text.hashCode.toString();
+    print(key);
 
-    List<String> storedList = await getFavorites();
-    if (storedList != null) {
-      storedList.add(text);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList(FAVORITE_LIST, storedList);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if(prefs.containsKey(key)) {
+      await prefs.remove(key);
+      return;
     }
+    await prefs.setString(key, text);
   }
 
   Future<List<String>> getFavorites() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> list = prefs.getStringList(FAVORITE_LIST);
-    if (list == null) {
-      return new List();
-    }
 
-    return list;
+    final List<String> favoritesList = new List();
+    final Set<String> keys = prefs.getKeys();
+
+    keys.forEach((key) {
+      if (key.startsWith(FAV_PREFIX)) {
+        favoritesList.add(prefs.getString(key));
+      }
+    });
+
+    return favoritesList;
+  }
+
+  Future<bool> isFavorite(String text) async {
+    final String key = FAV_PREFIX + text.hashCode.toString();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(key);
+  }
+
+  Future<bool> removeFavorite(String text) async {
+    final String key = FAV_PREFIX + text.hashCode.toString();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.remove(key);
   }
 }
