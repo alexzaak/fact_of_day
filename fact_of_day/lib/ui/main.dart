@@ -146,37 +146,35 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                     ),
                     flex: 4),
                 new Expanded(
-                    child: new Align(
-                      alignment: Alignment.bottomRight,
-                      child: new Container(
-                        margin: EdgeInsets.only(top: 10, right: 20),
-                        child: new AutoSizeText(
-                          fact.source,
-                          style: new TextStyle(
-                              color: Colors.white,
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w100),
-                        ),
-                      ),
-                    ),
-                    flex: 1),
-                new Expanded(
                     child: new Container(
                       margin: EdgeInsets.only(top: 10),
                       child: new Padding(
                           padding: EdgeInsets.only(left: 20, right: 20),
                           child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              new IconButton(
-                                  icon: Icon(Icons.favorite),
-                                  tooltip: 'Increase volume by 10',
-                                  onPressed: () =>
-                                      ViewModel().saveAsFavorite(fact.text)),
-                              new IconButton(
-                                  icon: Icon(Icons.share),
-                                  tooltip: 'Increase volume by 10',
-                                  onPressed: () => Share.share(fact.text))
+                              new AutoSizeText(
+                                fact.source,
+                                style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w100),
+                              ),
+                              new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    new IconButton(
+                                        icon: Icon(Icons.favorite),
+                                        tooltip: 'Increase volume by 10',
+                                        onPressed: () => ViewModel()
+                                            .saveAsFavorite(fact.text)),
+                                    new IconButton(
+                                        icon: Icon(Icons.share),
+                                        tooltip: 'Increase volume by 10',
+                                        onPressed: () => Share.share(fact.text))
+                                  ]),
                             ],
                           )),
                     ),
