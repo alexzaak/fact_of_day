@@ -40,7 +40,7 @@ class ViewModel {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if(prefs.containsKey(key)) {
+    if (prefs.containsKey(key)) {
       await prefs.remove(key);
       return;
     }

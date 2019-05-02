@@ -81,7 +81,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
   }
 
   _setFavoriteIcon(String text) async {
-    if(await ViewModel().isFavorite(text)) {
+    if (await ViewModel().isFavorite(text)) {
       setState(() {
         favoriteIcon = Icon(Icons.favorite);
       });
@@ -127,116 +127,117 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
     } else {
       return new Scaffold(
         backgroundColor: dispcolor,
-        appBar: AppBar(
-          title: Text("Drawer app"),
+        appBar: new AppBar(
+          elevation: 0.0,
+          backgroundColor: dispcolor.withOpacity(0.5),
         ),
-          drawer: Drawer(
-            child: ListView(
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.favorite),
-                  title: Text("Favorites"),
-                  trailing: Icon(Icons.arrow_forward),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => FavoriteScreen()));
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.star),
-                  title: Text("Rate me"),
-                  trailing: Icon(Icons.arrow_forward),
-                  onTap: () => _launchURL("https://play.google.com/store/apps/details?id=codes.zaak.architecturesample"),
-                ),
-              ],
-            ),
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.favorite),
+                title: Text("Favorites"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => FavoriteScreen()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.star),
+                title: Text("Rate me"),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: () => _launchURL(
+                    "https://play.google.com/store/apps/details?id=codes.zaak.architecturesample"),
+              ),
+            ],
           ),
-        body: new Padding(
-          padding: const EdgeInsets.symmetric(vertical: 75.0),
-          child: new Center(
-            child: new Column(
-              children: <Widget>[
-                new Expanded(
-                    child: new Align(
-                        alignment: Alignment.topLeft,
-                        child: new Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: new AutoSizeText(
-                            S.of(context).title,
-                            style: new TextStyle(
-                                color: Colors.white, fontSize: 45.0),
-                          ),
-                        )),
-                    flex: 2),
-                new Expanded(
-                    child: new InkWell(
-                      onTap: () => _getFact(),
-                      child: new Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: new Padding(
-                          padding:
-                              const EdgeInsets.only(left: 20.0, right: 20.0),
-                          child: new Opacity(
-                            opacity: animation.value * 1,
-                            child: new Transform(
-                                transform: new Matrix4.translationValues(
-                                    0.0, animation.value * -50.0, 0.0),
-                                child: new AutoSizeText(
-                                  fact.text,
-                                  minFontSize: 15.0,
-                                  maxFontSize: 45.0,
-                                  style: new TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 45.0,
-                                      fontWeight: FontWeight.w300),
-                                )),
+        ),
+        body: Builder(
+          builder: (context) => new Column(
+                children: <Widget>[
+                  new Expanded(
+                      child: new Align(
+                          alignment: Alignment.topLeft,
+                          child: new Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: new AutoSizeText(
+                              S.of(context).title,
+                              style: new TextStyle(
+                                  color: Colors.white, fontSize: 45.0),
+                            ),
+                          )),
+                      flex: 2),
+                  new Expanded(
+                      child: new InkWell(
+                        onTap: () => _getFact(),
+                        child: new Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: new Padding(
+                            padding:
+                                const EdgeInsets.only(left: 20.0, right: 20.0),
+                            child: new Opacity(
+                              opacity: animation.value * 1,
+                              child: new Transform(
+                                  transform: new Matrix4.translationValues(
+                                      0.0, animation.value * -50.0, 0.0),
+                                  child: new AutoSizeText(
+                                    fact.text,
+                                    minFontSize: 15.0,
+                                    maxFontSize: 45.0,
+                                    style: new TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 45.0,
+                                        fontWeight: FontWeight.w300),
+                                  )),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    flex: 4),
-                new Expanded(
-                    child: new Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: new Padding(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              new InkWell(
-                                  onTap: () => _launchURL(fact.sourceUrl),
-                                child: new AutoSizeText(
-                                S.of(context).source(fact.source),
-                                style: new TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w100),
-                              )),
-                              new Row(
-                                mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    new IconButton(
-                                        icon:favoriteIcon,
-                                        tooltip: 'Increase volume by 10',
-                                        onPressed: () => {
-                                          ViewModel().toggleFavorite(fact.text),
-                                          _setFavoriteIcon(fact.text)
-                                        }),
-                                    new IconButton(
-                                        icon: Icon(Icons.share),
-                                        tooltip: 'Increase volume by 10',
-                                        onPressed: () => Share.share(fact.text))
-                                  ]),
-                            ],
-                          )),
-                    ),
-                    flex: 1),
-              ],
-            ),
-          ),
+                      flex: 4),
+                  new Expanded(
+                      child: new Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: new Padding(
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                new InkWell(
+                                    onTap: () => _launchURL(fact.sourceUrl),
+                                    child: new AutoSizeText(
+                                      S.of(context).source(fact.source),
+                                      style: new TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w100),
+                                    )),
+                                new Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      new IconButton(
+                                          icon: Icon(Icons.share),
+                                          tooltip: 'Increase volume by 10',
+                                          onPressed: () =>
+                                              Share.share(fact.text)),
+                                      new IconButton(
+                                          icon: favoriteIcon,
+                                          tooltip: 'Increase volume by 10',
+                                          onPressed: () => {
+                                                ViewModel()
+                                                    .toggleFavorite(fact.text),
+                                                _setFavoriteIcon(fact.text)
+                                              }),
+                                    ]),
+                              ],
+                            )),
+                      ),
+                      flex: 1),
+                ],
+              ),
         ),
       );
     }
