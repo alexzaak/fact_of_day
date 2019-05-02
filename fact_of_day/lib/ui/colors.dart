@@ -8,4 +8,4 @@ List<Color> bgcolors = [
   Colors.teal
 ];
 
-Color dispcolor = Colors.blue;
+Color dispcolor = Colors.teal;

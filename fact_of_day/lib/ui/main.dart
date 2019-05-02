@@ -4,6 +4,7 @@ import 'package:fact_of_day/generated/i18n.dart';
 import 'package:fact_of_day/ui/colors.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 void main() async {
   runApp(App());
@@ -71,7 +72,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
     animationController = new AnimationController(
         vsync: this, duration: new Duration(seconds: 2));
     animation = new CurvedAnimation(
-        parent: animationController, curve: Curves.fastOutSlowIn);
+        parent: animationController, curve: Curves.linearToEaseOut);
     animation.addListener(() {
       this.setState(() {});
     });
@@ -89,11 +90,12 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
     if (fact == null) {
       return new Scaffold(
           backgroundColor: dispcolor,
-          body: new Padding(
-            padding: const EdgeInsets.symmetric(vertical: 75.0),
+          body: new Center(
             child: new AutoSizeText(
               S.of(context).hello,
-              style: new TextStyle(color: Colors.white10, fontSize: 45.0),
+              minFontSize: 60.0,
+              maxFontSize: 120.0,
+              style: new TextStyle(color: Colors.white, fontSize: 120.0),
             ),
           ));
     } else {
@@ -103,35 +105,82 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
           padding: const EdgeInsets.symmetric(vertical: 75.0),
           child: new Center(
             child: new Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                new Align(
-                    alignment: Alignment.topLeft,
-                    child: new Padding(
-                      padding: const EdgeInsets.only(left: 30.0),
-                      child: new AutoSizeText(
-                        S.of(context).title,
-                        style:
-                            new TextStyle(color: Colors.white, fontSize: 45.0),
+                new Expanded(
+                    child: new Align(
+                        alignment: Alignment.topLeft,
+                        child: new Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: new AutoSizeText(
+                            S.of(context).title,
+                            style: new TextStyle(
+                                color: Colors.white, fontSize: 45.0),
+                          ),
+                        )),
+                    flex: 2),
+                new Expanded(
+                    child: new InkWell(
+                      onTap: () => _getFact(),
+                      child: new Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: new Padding(
+                          padding:
+                              const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: new Opacity(
+                            opacity: animation.value * 1,
+                            child: new Transform(
+                                transform: new Matrix4.translationValues(
+                                    0.0, animation.value * -50.0, 0.0),
+                                child: new AutoSizeText(
+                                  fact.text,
+                                  minFontSize: 15.0,
+                                  maxFontSize: 45.0,
+                                  style: new TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 45.0,
+                                      fontWeight: FontWeight.w300),
+                                )),
+                          ),
+                        ),
                       ),
-                    )),
-                new Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20.0, top: 60.0),
-                  child: new Opacity(
-                    opacity: animation.value * 1,
-                    child: new Transform(
-                        transform: new Matrix4.translationValues(
-                            0.0, animation.value * -50.0, 0.0),
+                    ),
+                    flex: 4),
+                new Expanded(
+                    child: new Align(
+                      alignment: Alignment.bottomRight,
+                      child: new Container(
+                        margin: EdgeInsets.only(top: 10, right: 20),
                         child: new AutoSizeText(
-                          fact.text,
+                          fact.source,
                           style: new TextStyle(
                               color: Colors.white,
-                              fontSize: 45.0,
-                              fontWeight: FontWeight.w300),
-                        )),
-                  ),
-                ),
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w100),
+                        ),
+                      ),
+                    ),
+                    flex: 1),
+                new Expanded(
+                    child: new Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: new Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              new IconButton(
+                                  icon: Icon(Icons.favorite),
+                                  tooltip: 'Increase volume by 10',
+                                  onPressed: () =>
+                                      ViewModel().saveAsFavorite(fact.text)),
+                              new IconButton(
+                                  icon: Icon(Icons.share),
+                                  tooltip: 'Increase volume by 10',
+                                  onPressed: () => Share.share(fact.text))
+                            ],
+                          )),
+                    ),
+                    flex: 1),
               ],
             ),
           ),
