@@ -5,6 +5,7 @@ import 'package:fact_of_day/ui/colors.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   runApp(App());
@@ -65,6 +66,15 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
         animationController.forward();
       });
     });
+  }
+
+  _launchURL(String url) async {
+    print(url);
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print('Could not launch $url');
+    }
   }
 
   initState() {
@@ -154,13 +164,15 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              new AutoSizeText(
-                                fact.source,
+                              new InkWell(
+                                  onTap: () => _launchURL(fact.sourceUrl),
+                                child: new AutoSizeText(
+                                S.of(context).source(fact.source),
                                 style: new TextStyle(
                                     color: Colors.white,
                                     fontSize: 15.0,
                                     fontWeight: FontWeight.w100),
-                              ),
+                              )),
                               new Row(
                                 mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.end,

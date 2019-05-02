@@ -1,5 +1,5 @@
 {
   "hello": "Hello!",
-  "greetTo": "Nice to meet you, $name!",
-  "title": "Did you know?"
+  "title": "Did you know?",
+  "source": "Source: $source"
 }
