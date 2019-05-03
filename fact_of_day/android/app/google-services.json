@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "998836454115",
+    "firebase_url": "https://fact-of-the-day-d0524.firebaseio.com",
+    "project_id": "fact-of-the-day-d0524",
+    "storage_bucket": "fact-of-the-day-d0524.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998836454115:android:d76f6ae89ad0cf88",
+        "android_client_info": {
+          "package_name": "codes.zaak.fact_of_day"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998836454115-i6bh92ltj4mk8rpudhk1hdsgcjnc2ju2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfELFjL1YZX5qkvahan28s_YpPqmnXtBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "998836454115-i6bh92ltj4mk8rpudhk1hdsgcjnc2ju2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
