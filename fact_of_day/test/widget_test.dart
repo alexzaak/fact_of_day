@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:fact_of_day/ui/main.dart';
+import 'package:fact_of_day/main.dart';
 
 void main() {
   testWidgets('useless facts', (WidgetTester tester) async {
