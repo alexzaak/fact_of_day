@@ -205,7 +205,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                         fontWeight: FontWeight.w300)),
                 onTap: () {
                   _launchURL(
-                      "https://play.google.com/store/apps/details?id=codes.zaak.architecturesample");
+                      "https://play.google.com/store/apps/details?id=codes.zaak.fact_of_day");
                   _sendEvent("RATE_ME_OPENED");
                 },
               ),

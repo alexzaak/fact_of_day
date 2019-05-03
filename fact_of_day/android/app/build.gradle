@@ -44,8 +44,8 @@ android {
         applicationId "codes.zaak.fact_of_day"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 4//flutterVersionCode.toInteger()
-        versionName "1.0.3"//flutterVersionName
+        versionCode 6//flutterVersionCode.toInteger()
+        versionName "1.0.5"//flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -61,7 +61,7 @@ android {
         release {
 
             ndk{
-                abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+                //abiFilters //"armeabi", "x86", "armeabi-v7a" // abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
             }
 
             signingConfig signingConfigs.release
@@ -83,5 +83,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation(name:'armv7-fmmr', ext:'aar')
 }
