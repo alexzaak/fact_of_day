@@ -5,6 +5,8 @@ import 'package:fact_of_day/ui/colors.dart';
 import 'package:fact_of_day/ui/fact_of_day/fact_of_day.dart';
 import 'package:fact_of_day/ui/favorites/favorite_page.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +21,10 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> with SingleTickerProviderStateMixin {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
   String _locale = 'en';
 
   Future<void> _setLocale() async {
@@ -41,18 +47,28 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-        locale: Locale(_locale, ""),
-        localizationsDelegates: [S.delegate],
-        supportedLocales: S.delegate.supportedLocales,
-        localeResolutionCallback:
-            S.delegate.resolution(fallback: new Locale("en", "")),
-        home: AppBody());
+      locale: Locale(_locale, ""),
+      localizationsDelegates: [S.delegate],
+      supportedLocales: S.delegate.supportedLocales,
+      localeResolutionCallback:
+          S.delegate.resolution(fallback: new Locale("en", "")),
+      home: AppBody(
+        analytics: analytics,
+        observer: observer,
+      ),
+      navigatorObservers: <NavigatorObserver>[observer],
+    );
   }
 }
 
 class AppBody extends StatefulWidget {
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+  AppBody({Key key, this.analytics, this.observer}) : super(key: key);
+
   @override
-  _AppBody createState() => _AppBody();
+  _AppBody createState() => _AppBody(analytics, observer);
 }
 
 class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
@@ -60,6 +76,11 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Fact fact;
   Icon favoriteIcon = Icon(Icons.favorite_border);
+
+  final FirebaseAnalyticsObserver observer;
+  final FirebaseAnalytics analytics;
+
+  _AppBody(this.analytics, this.observer);
 
   Future<void> _getFact() async {
     ViewModel().getFact().then((response) {
@@ -112,6 +133,12 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  Future<void> _sendEvent(String name) async {
+    await analytics.logEvent(
+      name: name,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (fact == null) {
@@ -149,6 +176,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => FavoriteScreen()));
+                  _sendEvent("FAVORITE_SCREEN_OPENED");
                 },
               ),
               ListTile(
@@ -165,6 +193,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => FactOfDayScreen()));
+                  _sendEvent("FACT_OF_DAY_SCREEN_OPENED");
                 },
               ),
               ListTile(
@@ -174,8 +203,11 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                         color: Colors.black,
                         fontSize: 25.0,
                         fontWeight: FontWeight.w300)),
-                onTap: () => _launchURL(
-                    "https://play.google.com/store/apps/details?id=codes.zaak.architecturesample"),
+                onTap: () {
+                  _launchURL(
+                      "https://play.google.com/store/apps/details?id=codes.zaak.architecturesample");
+                  _sendEvent("RATE_ME_OPENED");
+                },
               ),
             ],
           ),
@@ -197,7 +229,10 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                       flex: 2),
                   new Expanded(
                       child: new InkWell(
-                        onTap: () => _getFact(),
+                        onTap: () {
+                          _getFact();
+                          _sendEvent("NEXT_FACT_TAP");
+                        },
                         child: new Container(
                           margin: EdgeInsets.only(top: 20),
                           child: new Padding(
@@ -232,7 +267,10 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 new InkWell(
-                                    onTap: () => _launchURL(fact.sourceUrl),
+                                    onTap: () {
+                                      _launchURL(fact.sourceUrl);
+                                      _sendEvent("FACT_SOURCE_OPENED");
+                                    },
                                     child: new AutoSizeText(
                                       S.of(context).source(fact.source),
                                       style: new TextStyle(
@@ -247,16 +285,21 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                                       new IconButton(
                                           icon: Icon(Icons.share),
                                           tooltip: S.of(context).share_the_fact,
-                                          onPressed: () =>
-                                              Share.share(fact.text)),
+                                          onPressed: () {
+                                            Share.share(fact.text);
+                                            _sendEvent("SHARE_BUTTON_CLICKED");
+                                          }),
                                       new IconButton(
                                           icon: favoriteIcon,
-                                          tooltip: S.of(context).add_to_favorite,
-                                          onPressed: () => {
-                                                ViewModel()
-                                                    .toggleFavorite(fact.text),
-                                                _setFavoriteIcon(fact.text)
-                                              }),
+                                          tooltip:
+                                              S.of(context).add_to_favorite,
+                                          onPressed: () {
+                                            ViewModel()
+                                                .toggleFavorite(fact.text);
+                                            _setFavoriteIcon(fact.text);
+                                            _sendEvent(
+                                                "FAVORITE_BUTTON_CLICKED");
+                                          }),
                                     ]),
                               ],
                             )),

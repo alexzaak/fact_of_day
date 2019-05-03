@@ -21,6 +21,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  firebase_core: ^0.3.4  # add dependency for Firebase Core
+  firebase_analytics: ^2.1.1+3  # add dependency for Google Analytics for Firebas
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
