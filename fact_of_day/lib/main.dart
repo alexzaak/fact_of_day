@@ -211,7 +211,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.star, color: Colors.teal),
+                leading: Icon(Icons.assignment, color: Colors.teal),
                 title: Text(S.of(context).credits,
                     style: new TextStyle(
                         color: Colors.black,
