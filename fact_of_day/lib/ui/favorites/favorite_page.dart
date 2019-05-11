@@ -1,3 +1,4 @@
+import 'package:fact_of_day/generated/i18n.dart';
 import 'package:fact_of_day/ui/colors.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -44,15 +45,24 @@ class _FavoriteScreen extends State<FavoriteScreen> {
         backgroundColor: dispcolor.withOpacity(0.5),
       ),
       body: Center(
-        child: new ListView.builder(
-            itemCount: favorites.length,
-            itemBuilder: (BuildContext ctxt, int index) {
-              return new CustomWidget(
-                  content: favorites[index],
-                  trailingIconOne: new Icon(Icons.share),
-                  trailingIconTwo: new Icon(Icons.favorite),
-                  onRemoveFavorite: this.onRemoveFavorite);
-            }),
+        child: favorites.isEmpty
+            ? Center(
+                child: Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    child: Text(S.of(context).favorite_list_empty,
+                        style: new TextStyle(
+                            color: Colors.white,
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.w300))))
+            : new ListView.builder(
+                itemCount: favorites.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return new CustomWidget(
+                      content: favorites[index],
+                      trailingIconOne: new Icon(Icons.share),
+                      trailingIconTwo: new Icon(Icons.favorite),
+                      onRemoveFavorite: this.onRemoveFavorite);
+                }),
       ),
     );
   }

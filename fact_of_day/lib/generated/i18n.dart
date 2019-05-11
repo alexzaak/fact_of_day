@@ -21,6 +21,7 @@ class S implements WidgetsLocalizations {
 
   String get add_to_favorite => "Add fact to the favorites";
   String get fact_of_day => "Fact of the day";
+  String get favorite_list_empty => "You have not yet added any facts to the favorites list.";
   String get favorites => "Favorites";
   String get hello => "Hello!";
   String get rate_me => "Rate me";
@@ -41,6 +42,8 @@ class $de extends S {
   String get fact_of_day => "Fakt des Tages";
   @override
   String get add_to_favorite => "Fakt zu Favoriten hinzufügen";
+  @override
+  String get favorite_list_empty => "Du hast bisher keine Fakten zur Favoritenliste hinzugefügt.";
   @override
   String get rate_me => "Bewerte mich";
   @override

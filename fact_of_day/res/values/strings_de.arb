@@ -6,5 +6,6 @@
   "favorites": "Favoriten",
   "rate_me": "Bewerte mich",
   "share_the_fact": "Fakt teilen",
-  "add_to_favorite": "Fakt zu Favoriten hinzufügen"
+  "add_to_favorite": "Fakt zu Favoriten hinzufügen",
+  "favorite_list_empty": "Du hast bisher keine Fakten zur Favoritenliste hinzugefügt."
 }

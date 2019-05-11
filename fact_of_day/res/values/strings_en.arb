@@ -6,5 +6,6 @@
   "favorites": "Favorites",
   "rate_me": "Rate me",
   "share_the_fact": "Share fact",
-  "add_to_favorite": "Add fact to the favorites"
+  "add_to_favorite": "Add fact to the favorites",
+  "favorite_list_empty": "You have not yet added any facts to the favorites list."
 }
