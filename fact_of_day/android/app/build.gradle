@@ -44,8 +44,8 @@ android {
         applicationId "codes.zaak.fact_of_day"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 6//flutterVersionCode.toInteger()
-        versionName "1.0.5"//flutterVersionName
+        versionCode 7//flutterVersionCode.toInteger()
+        versionName "1.1.0"//flutterVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
