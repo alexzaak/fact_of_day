@@ -5,6 +5,8 @@
   "fact_of_day": "Fakt des Tages",
   "favorites": "Favoriten",
   "rate_me": "Bewerte mich",
+  "credits": "Credits",
+  "credits_text": "Vielen Dank für die Entwicklung und Wartung von fantastischen Diensten und Widgets!",
   "share_the_fact": "Fakt teilen",
   "add_to_favorite": "Fakt zu Favoriten hinzufügen",
   "favorite_list_empty": "Du hast bisher keine Fakten zur Favoritenliste hinzugefügt."

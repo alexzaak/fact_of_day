@@ -1,4 +1,5 @@
 import 'package:devicelocale/devicelocale.dart';
+import 'package:fact_of_day/data/credit.dart';
 import 'package:fact_of_day/data/fact.dart';
 import 'package:fact_of_day/data/repository.dart';
 import 'package:flutter/services.dart';
@@ -77,5 +78,9 @@ class ViewModel {
     final String key = FAV_PREFIX + text.hashCode.toString();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.remove(key);
+  }
+
+  List<Credit> getCredits() {
+    return Repository().getCreditList();
   }
 }

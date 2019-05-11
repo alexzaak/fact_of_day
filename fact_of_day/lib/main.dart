@@ -4,6 +4,7 @@ import 'package:fact_of_day/generated/i18n.dart';
 import 'package:fact_of_day/ui/colors.dart';
 import 'package:fact_of_day/ui/fact_of_day/fact_of_day.dart';
 import 'package:fact_of_day/ui/favorites/favorite_page.dart';
+import 'package:fact_of_day/ui/screens/credits.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -207,6 +208,20 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                   _launchURL(
                       "https://play.google.com/store/apps/details?id=codes.zaak.fact_of_day");
                   _sendEvent("RATE_ME_OPENED");
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.star, color: Colors.teal),
+                title: Text(S.of(context).credits,
+                    style: new TextStyle(
+                        color: Colors.black,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.w300)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => CreditsScreen()));
+                  _sendEvent("CREDITS_OPENED");
                 },
               ),
             ],

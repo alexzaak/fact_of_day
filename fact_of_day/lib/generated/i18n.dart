@@ -20,6 +20,8 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get add_to_favorite => "Add fact to the favorites";
+  String get credits => "Credits";
+  String get credits_text => "Thanks for developing and maintaining of awesome services and widgets!";
   String get fact_of_day => "Fact of the day";
   String get favorite_list_empty => "You have not yet added any facts to the favorites list.";
   String get favorites => "Favorites";
@@ -45,6 +47,8 @@ class $de extends S {
   @override
   String get favorite_list_empty => "Du hast bisher keine Fakten zur Favoritenliste hinzugefügt.";
   @override
+  String get credits => "Credits";
+  @override
   String get rate_me => "Bewerte mich";
   @override
   String get hello => "Hallo!";
@@ -52,6 +56,8 @@ class $de extends S {
   String get title => "Hast du gewusst?";
   @override
   String get share_the_fact => "Fakt teilen";
+  @override
+  String get credits_text => "Vielen Dank für die Entwicklung und Wartung von fantastischen Diensten und Widgets!";
   @override
   String source(String source) => "Quelle: $source";
 }
