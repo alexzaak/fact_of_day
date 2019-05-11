@@ -32,6 +32,10 @@ class Repository {
   List<Credit> getCreditList() {
     List<Credit> creditList = new List();
     creditList.add(Credit("Random Useless Facts - API", "http://randomuselessfact.appspot.com"));
+    creditList.add(Credit("Icons made by Icon Pond",
+        "https://www.flaticon.com/authors/popcorns-arts"));
+    creditList.add(Credit(
+        "Icons delivered by www.flaticon.com", "https://www.flaticon.com/"));
     creditList.add(Credit("Flutter", "https://flutter.dev"));
     creditList.add(Credit("dart-lang/http", "https://github.com/dart-lang/http"));
     creditList.add(Credit("leisim/auto_size_text", "https://github.com/leisim/auto_size_text"));
