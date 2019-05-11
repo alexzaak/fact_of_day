@@ -6,6 +6,7 @@ import 'package:fact_of_day/ui/screens/credits.dart';
 import 'package:fact_of_day/ui/screens/fact_of_day.dart';
 import 'package:fact_of_day/ui/screens/favorite_page.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
+import 'package:fact_of_day/utils/tacking_events.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -177,7 +178,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => FavoriteScreen()));
-                  _sendEvent("FAVORITE_SCREEN_OPENED");
+                  _sendEvent(FAVORITE_SCREEN_OPENED);
                 },
               ),
               ListTile(
@@ -194,7 +195,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => FactOfDayScreen()));
-                  _sendEvent("FACT_OF_DAY_SCREEN_OPENED");
+                  _sendEvent(FACT_OF_DAY_SCREEN_OPENED);
                 },
               ),
               ListTile(
@@ -207,7 +208,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                 onTap: () {
                   _launchURL(
                       "https://play.google.com/store/apps/details?id=codes.zaak.fact_of_day");
-                  _sendEvent("RATE_ME_OPENED");
+                  _sendEvent(RATE_ME_OPENED);
                 },
               ),
               ListTile(
@@ -221,7 +222,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => CreditsScreen()));
-                  _sendEvent("CREDITS_OPENED");
+                  _sendEvent(CREDITS_OPENED);
                 },
               ),
             ],
@@ -246,7 +247,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                       child: new InkWell(
                         onTap: () {
                           _getFact();
-                          _sendEvent("NEXT_FACT_TAP");
+                          _sendEvent(NEXT_FACT_TAP);
                         },
                         child: new Container(
                           margin: EdgeInsets.only(top: 20),
@@ -284,7 +285,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                                 new InkWell(
                                     onTap: () {
                                       _launchURL(fact.sourceUrl);
-                                      _sendEvent("FACT_SOURCE_OPENED");
+                                      _sendEvent(FACT_SOURCE_OPENED);
                                     },
                                     child: new AutoSizeText(
                                       S.of(context).source(fact.source),
@@ -302,7 +303,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                                           tooltip: S.of(context).share_the_fact,
                                           onPressed: () {
                                             Share.share(fact.text);
-                                            _sendEvent("SHARE_BUTTON_CLICKED");
+                                            _sendEvent(SHARE_BUTTON_CLICKED);
                                           }),
                                       new IconButton(
                                           icon: favoriteIcon,
@@ -312,8 +313,7 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
                                             ViewModel()
                                                 .toggleFavorite(fact.text);
                                             _setFavoriteIcon(fact.text);
-                                            _sendEvent(
-                                                "FAVORITE_BUTTON_CLICKED");
+                                            _sendEvent(FAVORITE_BUTTON_CLICKED);
                                           }),
                                     ]),
                               ],
