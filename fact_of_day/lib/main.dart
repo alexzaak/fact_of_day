@@ -1,3 +1,4 @@
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fact_of_day/data/fact.dart';
 import 'package:fact_of_day/generated/i18n.dart';
@@ -6,6 +7,7 @@ import 'package:fact_of_day/ui/screens/credits.dart';
 import 'package:fact_of_day/ui/screens/fact_of_day.dart';
 import 'package:fact_of_day/ui/screens/favorite_page.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
+import 'package:fact_of_day/utils/banner_id.dart';
 import 'package:fact_of_day/utils/tacking_events.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -15,6 +17,7 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
+  Admob.initialize(ANDROID_AD_UNIT_ID);
   runApp(App());
 }
 
@@ -235,98 +238,101 @@ class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
         ),
         body: Builder(
           builder: (context) => new Column(
-                children: <Widget>[
-                  new Expanded(
-                      child: new Align(
-                          alignment: Alignment.topLeft,
-                          child: new Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: new AutoSizeText(
-                              S.of(context).title,
-                              style: new TextStyle(
-                                  color: Colors.white, fontSize: 45.0),
-                            ),
-                          )),
-                      flex: 2),
-                  new Expanded(
-                      child: new InkWell(
-                        onTap: () {
-                          _getFact();
-                          _sendEvent(NEXT_FACT_TAP);
-                        },
-                        child: new Container(
-                          margin: EdgeInsets.only(top: 20),
-                          child: new Padding(
-                            padding:
-                                const EdgeInsets.only(left: 20.0, right: 20.0),
-                            child: new Opacity(
-                              opacity: animation.value * 1,
-                              child: new Transform(
-                                  transform: new Matrix4.translationValues(
-                                      0.0, animation.value * -50.0, 0.0),
-                                  child: new AutoSizeText(
-                                    fact.text,
-                                    minFontSize: 15.0,
-                                    maxFontSize: 45.0,
-                                    style: new TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 45.0,
-                                        fontWeight: FontWeight.w300),
-                                  )),
-                            ),
-                          ),
+            children: <Widget>[
+              new Expanded(
+                  child: new Align(
+                      alignment: Alignment.topLeft,
+                      child: new Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: new AutoSizeText(
+                          S.of(context).title,
+                          style: new TextStyle(
+                              color: Colors.white, fontSize: 45.0),
+                        ),
+                      )),
+                  flex: 2),
+              new Expanded(
+                  child: new InkWell(
+                    onTap: () {
+                      _getFact();
+                      _sendEvent(NEXT_FACT_TAP);
+                    },
+                    child: new Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: new Padding(
+                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                        child: new Opacity(
+                          opacity: animation.value * 1,
+                          child: new Transform(
+                              transform: new Matrix4.translationValues(
+                                  0.0, animation.value * -50.0, 0.0),
+                              child: new AutoSizeText(
+                                fact.text,
+                                minFontSize: 15.0,
+                                maxFontSize: 45.0,
+                                style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 45.0,
+                                    fontWeight: FontWeight.w300),
+                              )),
                         ),
                       ),
-                      flex: 4),
-                  new Expanded(
-                      child: new Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: new Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: new Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new InkWell(
-                                    onTap: () {
-                                      _launchURL(fact.sourceUrl);
-                                      _sendEvent(FACT_SOURCE_OPENED);
-                                    },
-                                    child: new AutoSizeText(
-                                      S.of(context).source(fact.source),
-                                      style: new TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.w100),
-                                    )),
-                                new Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      new IconButton(
-                                          icon: Icon(Icons.share),
-                                          tooltip: S.of(context).share_the_fact,
-                                          onPressed: () {
-                                            Share.share(fact.text);
-                                            _sendEvent(SHARE_BUTTON_CLICKED);
-                                          }),
-                                      new IconButton(
-                                          icon: favoriteIcon,
-                                          tooltip:
-                                              S.of(context).add_to_favorite,
-                                          onPressed: () {
-                                            ViewModel()
-                                                .toggleFavorite(fact.text);
-                                            _setFavoriteIcon(fact.text);
-                                            _sendEvent(FAVORITE_BUTTON_CLICKED);
-                                          }),
-                                    ]),
-                              ],
-                            )),
-                      ),
-                      flex: 1),
-                ],
-              ),
+                    ),
+                  ),
+                  flex: 4),
+              new Expanded(
+                  child: new Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: new Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: new Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            new InkWell(
+                                onTap: () {
+                                  _launchURL(fact.sourceUrl);
+                                  _sendEvent(FACT_SOURCE_OPENED);
+                                },
+                                child: new AutoSizeText(
+                                  S.of(context).source(fact.source),
+                                  style: new TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w100),
+                                )),
+                            new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  new IconButton(
+                                      icon: Icon(Icons.share),
+                                      tooltip: S.of(context).share_the_fact,
+                                      onPressed: () {
+                                        Share.share(fact.text);
+                                        _sendEvent(SHARE_BUTTON_CLICKED);
+                                      }),
+                                  new IconButton(
+                                      icon: favoriteIcon,
+                                      tooltip: S.of(context).add_to_favorite,
+                                      onPressed: () {
+                                        ViewModel().toggleFavorite(fact.text);
+                                        _setFavoriteIcon(fact.text);
+                                        _sendEvent(FAVORITE_BUTTON_CLICKED);
+                                      }),
+                                ]),
+                          ],
+                        )),
+                  ),
+                  flex: 1),
+              Expanded(
+                child: AdmobBanner(
+                  adUnitId: BANNER_ANDROID_AD_UNIT_ID,
+                  adSize: AdmobBannerSize.SMART_BANNER,
+                ),
+              )
+            ],
+          ),
         ),
       );
     }

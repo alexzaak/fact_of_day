@@ -63,7 +63,7 @@ class _CreditsScreen extends State<CreditsScreen> {
         new Expanded(
             child: new ListView.builder(
                 itemCount: _credits.length,
-                itemBuilder: (BuildContext ctxt, int index) {
+                itemBuilder: (BuildContext ctx, int index) {
                   return new GestureDetector(
                     onTap: () => _launchURL(_credits[index].link),
                     child: new CustomWidget(
@@ -104,7 +104,7 @@ class CustomWidget extends StatelessWidget {
                     name,
                     style: new TextStyle(
                         color: Colors.black,
-                        fontSize: 25.0,
+                        fontSize: 20.0,
                         fontWeight: FontWeight.w300),
                   )),
               new IconButton(
