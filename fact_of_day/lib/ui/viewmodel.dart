@@ -1,43 +1,43 @@
-import 'package:devicelocale/devicelocale.dart';
-import 'package:fact_of_day/data/credit.dart';
-import 'package:fact_of_day/data/fact.dart';
-import 'package:fact_of_day/data/repository.dart';
-import 'package:flutter/services.dart';
+import 'dart:async';
+
+import 'package:fact_of_day/domain/get_credits_usecase.dart';
+import 'package:fact_of_day/domain/get_language_code_usecase.dart';
+import 'package:fact_of_day/domain/get_random_fact_usecase.dart';
+import 'package:fact_of_day/domain/model/credit.dart';
+import 'package:fact_of_day/domain/model/fact.dart';
+import 'package:fact_of_day/domain/url_launcher_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewModel {
+  final GetLanguageCodeUseCase _getLanguageCodeUseCase;
+  final GetRandomFactUseCase _getRandomFactUseCase;
+  final GetCreditsUseCase _getCreditsUseCase;
+  final UrlLauncherUseCase _urlLauncherUseCase;
+
+  StreamController<Fact> factEvent;
   static const String FAVORITE_LIST = "pref_favorite_list";
   static const String FAV_PREFIX = "pref_fav_";
 
-  Future<String> getLanguageCode() async {
-    String myLanguage;
-    try {
-      String language = await Devicelocale.currentLocale;
-
-      if (language == null) {
-        myLanguage = "en";
-      } else if (language.startsWith("de")) {
-        myLanguage = "de";
-      } else {
-        myLanguage = "en";
-      }
-    } on PlatformException {
-      print("Error obtaining current locale");
-
-      myLanguage = "en";
-    }
-
-    return myLanguage;
+  ViewModel(this._getLanguageCodeUseCase, this._getRandomFactUseCase,
+      this._getCreditsUseCase, this._urlLauncherUseCase) {
+    factEvent = StreamController();
   }
 
-  Future<Fact> getFact() async {
-    String languageCode = await getLanguageCode();
-    return await Repository().getRandom(languageCode);
+  void close() {
+    print("close");
+    factEvent.close();
   }
 
-  Future<Fact> getFactOfDay() async {
-    String languageCode = await getLanguageCode();
-    return await Repository().getFactOfDay(languageCode);
+  Future<Fact> getRandomFact() {
+    return this._getRandomFactUseCase.getRandom();
+  }
+
+  Future<List<Credit>> getCredits() {
+    return _getCreditsUseCase.execute();
+  }
+
+  Future<void> onUrlLaunch(String url) {
+    return _urlLauncherUseCase.execute(url);
   }
 
   void toggleFavorite(String text) async {
@@ -78,9 +78,5 @@ class ViewModel {
     final String key = FAV_PREFIX + text.hashCode.toString();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.remove(key);
-  }
-
-  List<Credit> getCredits() {
-    return Repository().getCreditList();
   }
 }

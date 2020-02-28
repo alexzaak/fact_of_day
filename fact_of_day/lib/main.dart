@@ -1,59 +1,78 @@
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:fact_of_day/data/fact.dart';
+import 'package:fact_of_day/data/device_local_repository.dart';
+import 'package:fact_of_day/data/fact_repository.dart';
+import 'package:fact_of_day/data/local/tables.dart';
+import 'package:fact_of_day/data/open_url_repository.dart';
+import 'package:fact_of_day/domain/get_credits_usecase.dart';
+import 'package:fact_of_day/domain/get_language_code_usecase.dart';
+import 'package:fact_of_day/domain/get_random_fact_usecase.dart';
+import 'package:fact_of_day/domain/url_launcher_usecase.dart';
 import 'package:fact_of_day/generated/i18n.dart';
-import 'package:fact_of_day/ui/colors.dart';
-import 'package:fact_of_day/ui/screens/credits.dart';
-import 'package:fact_of_day/ui/screens/fact_of_day.dart';
-import 'package:fact_of_day/ui/screens/favorite_page.dart';
+import 'package:fact_of_day/tabs/favorite_tab.dart';
+import 'package:fact_of_day/tabs/start_tab.dart';
+import 'package:fact_of_day/ui/bottom_nav_controller.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
 import 'package:fact_of_day/utils/banner_id.dart';
-import 'package:fact_of_day/utils/tacking_events.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_simple_dependency_injection/injector.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final injector = ModuleContainer().initialise(Injector.getInjector());
+
+  final ViewModel viewModel = injector.get<ViewModel>();
+
   Admob.initialize(ANDROID_AD_UNIT_ID);
-  runApp(App());
+  runApp(App(viewModel));
 }
 
-class App extends StatefulWidget {
-  @override
-  _AppState createState() => _AppState();
+class ModuleContainer {
+  Injector initialise(Injector injector) {
+    injector.map<FactRepository>((i) => FactRepository(), isSingleton: true);
+    injector.map<DeviceLocalRepository>((i) => DeviceLocalRepository(),
+        isSingleton: true);
+    injector.map<GetLanguageCodeUseCase>(
+        (i) => GetLanguageCodeUseCase(i.get<DeviceLocalRepository>()));
+
+    injector.map<GetRandomFactUseCase>((i) => GetRandomFactUseCase(
+        i.get<GetLanguageCodeUseCase>(), i.get<FactRepository>()));
+
+    injector.map<GetCreditsUseCase>((i) => GetCreditsUseCase());
+
+    injector.map<OpenUrlRepository>((i) => OpenUrlRepository());
+    injector.map<UrlLauncherUseCase>(
+        (i) => UrlLauncherUseCase(i.get<OpenUrlRepository>()));
+
+    injector.map<ViewModel>((i) => ViewModel(
+        i.get<GetLanguageCodeUseCase>(),
+        i.get<GetRandomFactUseCase>(),
+        i.get<GetCreditsUseCase>(),
+        i.get<UrlLauncherUseCase>()));
+
+    return injector;
+  }
 }
 
-class _AppState extends State<App> with SingleTickerProviderStateMixin {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+class App extends StatelessWidget {
+  final ViewModel viewModel;
 
-  String _locale = 'en';
-
-  Future<void> _setLocale() async {
-    final String lang = await ViewModel().getLanguageCode();
-    print(lang);
-    setState(() {
-      _locale = lang;
-    });
-  }
-
-  initState() {
-    super.initState();
-    _setLocale();
-  }
-
-  dispose() {
-    super.dispose();
-  }
+  const App(
+    this.viewModel, {
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      locale: Locale(_locale, ""),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: MultiProvider(providers: [
+        Provider(create: (_) => Database().favoriteDao),
+        Provider(create: (_) => viewModel)
+      ], child: BottomNavigationBarController()),
+      locale: Locale("en", ""),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -62,279 +81,49 @@ class _AppState extends State<App> with SingleTickerProviderStateMixin {
       supportedLocales: S.delegate.supportedLocales,
       localeResolutionCallback:
           S.delegate.resolution(fallback: new Locale("en", "")),
-      home: AppBody(
-        analytics: analytics,
-        observer: observer,
-      ),
-      navigatorObservers: <NavigatorObserver>[observer],
     );
   }
 }
 
-class AppBody extends StatefulWidget {
-  final FirebaseAnalytics analytics;
-  final FirebaseAnalyticsObserver observer;
-
-  AppBody({Key key, this.analytics, this.observer}) : super(key: key);
-
+class Home extends StatefulWidget {
   @override
-  _AppBody createState() => _AppBody(analytics, observer);
+  _HomeState createState() => _HomeState();
 }
 
-class _AppBody extends State<AppBody> with SingleTickerProviderStateMixin {
-  Animation animation;
-  AnimationController animationController;
-  Fact fact;
-  Icon favoriteIcon = Icon(Icons.favorite_border);
-
-  final FirebaseAnalyticsObserver observer;
-  final FirebaseAnalytics analytics;
-
-  _AppBody(this.analytics, this.observer);
-
-  Future<void> _getFact() async {
-    ViewModel().getFact().then((response) {
-      setState(() {
-        fact = response;
-        _setFavoriteIcon(fact.text);
-        animationController.reset();
-        animationController.forward();
-      });
-    });
-  }
-
-  _launchURL(String url) async {
-    print(url);
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      print('Could not launch $url');
-    }
-  }
-
-  _setFavoriteIcon(String text) async {
-    if (await ViewModel().isFavorite(text)) {
-      setState(() {
-        favoriteIcon = Icon(Icons.favorite);
-      });
-      return;
-    }
-
-    setState(() {
-      favoriteIcon = Icon(Icons.favorite_border);
-    });
-  }
-
-  initState() {
-    super.initState();
-    animationController = new AnimationController(
-        vsync: this, duration: new Duration(seconds: 2));
-    animation = new CurvedAnimation(
-        parent: animationController, curve: Curves.linearToEaseOut);
-    animation.addListener(() {
-      this.setState(() {});
-    });
-    animationController.forward();
-    _getFact();
-  }
-
-  dispose() {
-    animationController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _sendEvent(String name) async {
-    await analytics.logEvent(
-      name: name,
-    );
-  }
+class _HomeState extends State<Home> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    if (fact == null) {
-      return new Scaffold(
-          backgroundColor: dispcolor,
-          body: new Center(
-            child: new AutoSizeText(
-              S.of(context).hello,
-              minFontSize: 60.0,
-              maxFontSize: 120.0,
-              style: new TextStyle(color: Colors.white, fontSize: 120.0),
-            ),
-          ));
-    } else {
-      return new Scaffold(
-        backgroundColor: dispcolor,
-        appBar: new AppBar(
-          elevation: 0.0,
-          backgroundColor: dispcolor.withOpacity(0.5),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(
-                  Icons.favorite,
-                  color: Colors.teal,
-                ),
-                title: Text(S.of(context).favorites,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => FavoriteScreen()));
-                  _sendEvent(FAVORITE_SCREEN_OPENED);
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.today,
-                  color: Colors.teal,
-                ),
-                title: Text(S.of(context).fact_of_day,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => FactOfDayScreen()));
-                  _sendEvent(FACT_OF_DAY_SCREEN_OPENED);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.star, color: Colors.teal),
-                title: Text(S.of(context).rate_me,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () {
-                  _launchURL(
-                      "https://play.google.com/store/apps/details?id=codes.zaak.fact_of_day");
-                  _sendEvent(RATE_ME_OPENED);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.assignment, color: Colors.teal),
-                title: Text(S.of(context).credits,
-                    style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w300)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => CreditsScreen()));
-                  _sendEvent(CREDITS_OPENED);
-                },
-              ),
-            ],
+    final List<Widget> _children = [StartTab(), FavoriteTab(), FavoriteTab()];
+
+    return Scaffold(
+      body: _children[_currentIndex], // new
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: onTabTapped,
+        selectedItemColor: Theme.of(context).accentColor,
+        unselectedItemColor: Theme.of(context).primaryTextTheme.title.color,
+        items: [
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.question_answer),
+            title: Text('Facts'),
           ),
-        ),
-        body: Builder(
-          builder: (context) => new Column(
-            children: <Widget>[
-              new Expanded(
-                  child: new Align(
-                      alignment: Alignment.topLeft,
-                      child: new Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: new AutoSizeText(
-                          S.of(context).title,
-                          style: new TextStyle(
-                              color: Colors.white, fontSize: 45.0),
-                        ),
-                      )),
-                  flex: 2),
-              new Expanded(
-                  child: new InkWell(
-                    onTap: () {
-                      _getFact();
-                      _sendEvent(NEXT_FACT_TAP);
-                    },
-                    child: new Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: new Padding(
-                        padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                        child: new Opacity(
-                          opacity: animation.value * 1,
-                          child: new Transform(
-                              transform: new Matrix4.translationValues(
-                                  0.0, animation.value * -50.0, 0.0),
-                              child: new AutoSizeText(
-                                fact.text,
-                                minFontSize: 15.0,
-                                maxFontSize: 45.0,
-                                style: new TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 45.0,
-                                    fontWeight: FontWeight.w300),
-                              )),
-                        ),
-                      ),
-                    ),
-                  ),
-                  flex: 4),
-              new Expanded(
-                  child: new Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: new Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20),
-                        child: new Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            new InkWell(
-                                onTap: () {
-                                  _launchURL(fact.sourceUrl);
-                                  _sendEvent(FACT_SOURCE_OPENED);
-                                },
-                                child: new AutoSizeText(
-                                  S.of(context).source(fact.source),
-                                  style: new TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w100),
-                                )),
-                            new Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  new IconButton(
-                                      icon: Icon(Icons.share),
-                                      tooltip: S.of(context).share_the_fact,
-                                      onPressed: () {
-                                        Share.share(fact.text);
-                                        _sendEvent(SHARE_BUTTON_CLICKED);
-                                      }),
-                                  new IconButton(
-                                      icon: favoriteIcon,
-                                      tooltip: S.of(context).add_to_favorite,
-                                      onPressed: () {
-                                        ViewModel().toggleFavorite(fact.text);
-                                        _setFavoriteIcon(fact.text);
-                                        _sendEvent(FAVORITE_BUTTON_CLICKED);
-                                      }),
-                                ]),
-                          ],
-                        )),
-                  ),
-                  flex: 1),
-              Expanded(
-                child: AdmobBanner(
-                  adUnitId: BANNER_ANDROID_AD_UNIT_ID,
-                  adSize: AdmobBannerSize.SMART_BANNER,
-                ),
-              )
-            ],
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            title: Text('Favorites'),
           ),
-        ),
-      );
-    }
+          new BottomNavigationBarItem(
+              icon: Icon(Icons.person), title: Text('Profile'))
+        ],
+      ),
+    );
+  }
+
+  void onTabTapped(int index) {
+    print(index);
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
