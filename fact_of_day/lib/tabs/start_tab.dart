@@ -81,7 +81,7 @@ class MainWidget extends StatelessWidget {
                       height: MediaQuery.of(context).size.height * 0.7,
                       width: MediaQuery.of(context).size.width * 0.95,
                       child: InkWell(
-                          onTap: _viewModelProvider.getRandomFact,
+                          onTap: () => _viewModelProvider.getRandomFact,
                           child: Card(
                               child: Padding(
                             padding: EdgeInsets.all(
