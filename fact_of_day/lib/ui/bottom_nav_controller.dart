@@ -30,7 +30,7 @@ class _BottomNavigationBarControllerState
         onTap: (int index) => setState(() => _selectedIndex = index),
         currentIndex: selectedIndex,
         selectedItemColor: Theme.of(context).accentColor,
-        unselectedItemColor: Theme.of(context).primaryTextTheme.title.color,
+        unselectedItemColor: Theme.of(context).primaryTextTheme.headline6.color,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.question_answer),
