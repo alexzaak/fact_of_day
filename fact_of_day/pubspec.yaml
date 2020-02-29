@@ -14,7 +14,7 @@ description: A new Flutter project.
 version: 2.0.0+11
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -34,7 +34,7 @@ dependencies:
   share: ^0.6.3+6
   shared_preferences: ^0.5.6+2
   url_launcher: ^5.4.2
-  admob_flutter: ^0.3.4
+  firebase_admob: ^0.9.1+1
   moor_flutter: ^2.1.1
   provider: ^4.0.4
   flutter_simple_dependency_injection: ^1.0.2+1

@@ -30,7 +30,9 @@ class FavoriteTab extends StatelessWidget {
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.w300),
                   ));
                 }
-                return MainWidget(_data);
+                return Padding(
+                    padding: EdgeInsets.only(top: 60),
+                    child: MainWidget(_data));
               }
               return Center(child: CircularProgressIndicator());
             }));

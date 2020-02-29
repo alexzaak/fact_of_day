@@ -1,4 +1,7 @@
-import 'package:admob_flutter/admob_flutter.dart';
+import 'package:fact_of_day/admob/domain/get_ad_unit_id_usecase.dart';
+import 'package:fact_of_day/admob/domain/get_target_info_usecase.dart';
+import 'package:fact_of_day/admob/domain/setup_admob_usecase.dart';
+import 'package:fact_of_day/admob/domain/show_banner_usecase.dart';
 import 'package:fact_of_day/data/device_local_repository.dart';
 import 'package:fact_of_day/data/fact_repository.dart';
 import 'package:fact_of_day/data/local/tables.dart';
@@ -12,7 +15,6 @@ import 'package:fact_of_day/tabs/favorite_tab.dart';
 import 'package:fact_of_day/tabs/start_tab.dart';
 import 'package:fact_of_day/ui/bottom_nav_controller.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
-import 'package:fact_of_day/utils/banner_id.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
@@ -21,10 +23,15 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final injector = ModuleContainer().initialise(Injector.getInjector());
+  final admobInjector =
+      AdmobModuleContainer().initialise(Injector.getInjector());
 
   final ViewModel viewModel = injector.get<ViewModel>();
 
-  Admob.initialize(ANDROID_AD_UNIT_ID);
+  admobInjector.get<SetupAdmobUseCase>().execute().then((ready) => {
+        if (ready) {admobInjector.get<ShowBannerUseCase>().execute()}
+      });
+
   runApp(App(viewModel));
 }
 
@@ -50,6 +57,19 @@ class ModuleContainer {
         i.get<GetRandomFactUseCase>(),
         i.get<GetCreditsUseCase>(),
         i.get<UrlLauncherUseCase>()));
+
+    return injector;
+  }
+}
+
+class AdmobModuleContainer {
+  Injector initialise(Injector injector) {
+    injector.map<SetupAdmobUseCase>((i) => SetupAdmobUseCase(),
+        isSingleton: true);
+    injector.map<GetAdUniIdUseCase>((i) => GetAdUniIdUseCase());
+    injector.map<GetTargetInfoUseCase>((i) => GetTargetInfoUseCase());
+    injector.map<ShowBannerUseCase>((i) => ShowBannerUseCase(
+        i.get<GetTargetInfoUseCase>(), i.get<GetAdUniIdUseCase>()));
 
     return injector;
   }

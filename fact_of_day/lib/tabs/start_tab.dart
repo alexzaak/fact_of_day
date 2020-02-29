@@ -1,10 +1,8 @@
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fact_of_day/data/local/tables.dart';
 import 'package:fact_of_day/domain/model/fact.dart';
 import 'package:fact_of_day/generated/i18n.dart';
 import 'package:fact_of_day/ui/viewmodel.dart';
-import 'package:fact_of_day/utils/banner_id.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
@@ -59,6 +57,7 @@ class MainWidget extends StatelessWidget {
       padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.1),
       child: Column(
         children: <Widget>[
+          Spacer(),
           Expanded(
               flex: 1,
               child: AutoSizeText(
@@ -71,9 +70,7 @@ class MainWidget extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 45),
               )),
-          Spacer(
-            flex: 1,
-          ),
+          Spacer(),
           Expanded(
               flex: 6,
               child: Center(
@@ -143,15 +140,7 @@ class MainWidget extends StatelessWidget {
                               ],
                             ),
                           )))))),
-          Spacer(
-            flex: 1,
-          ),
-          Expanded(
-              flex: 1,
-              child: AdmobBanner(
-                adUnitId: BANNER_ANDROID_AD_UNIT_ID,
-                adSize: AdmobBannerSize.SMART_BANNER,
-              ))
+          Spacer()
         ],
       ),
     );

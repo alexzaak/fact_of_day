@@ -43,15 +43,17 @@ class CreditWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ListView.builder(
-          itemCount: _credit.length,
-          itemBuilder: (BuildContext ctx, int index) {
-            return CustomWidget(
-                name: _credit[index].name,
-                link: _credit[index].link,
-                trailingIconOne: new Icon(Icons.share));
-          }),
+    return Padding(
+      padding: EdgeInsets.only(top: 60),
+      child: Center(
+          child: ListView.builder(
+              itemCount: _credit.length,
+              itemBuilder: (BuildContext ctx, int index) {
+                return CustomWidget(
+                    name: _credit[index].name,
+                    link: _credit[index].link,
+                    trailingIconOne: new Icon(Icons.share));
+              })),
     );
   }
 }
