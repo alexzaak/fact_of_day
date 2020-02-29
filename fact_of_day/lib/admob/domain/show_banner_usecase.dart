@@ -25,7 +25,7 @@ class ShowBannerUseCase {
       ..load()
       ..show(
         // Positions the banner ad 60 pixels from the bottom of the screen
-        anchorOffset: 0.0,
+        anchorOffset: 30.0,
         // Positions the banner ad 10 pixels from the center of the screen to the right
         horizontalCenterOffset: 0.0,
         // Banner Position
