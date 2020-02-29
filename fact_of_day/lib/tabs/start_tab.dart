@@ -15,70 +15,76 @@ class StartTab extends StatefulWidget {
 }
 
 class _StartTab extends State<StartTab> {
-  ViewModel _viewModelProvider;
-
-  initState() {
-    super.initState();
-  }
-
-  dispose() {
-    _viewModelProvider.close();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    _viewModelProvider = Provider.of<ViewModel>(context);
-
     return Scaffold(
-        body: StreamBuilder<Fact>(
-            stream: _viewModelProvider.getRandomFact().asStream(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final _data = snapshot.data;
-                return MainWidget(_data);
-              }
-              return Center(child: CircularProgressIndicator());
-            }));
+        body: Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.1),
+      child: Column(
+        children: <Widget>[
+          Spacer(),
+          TitleWidget(),
+          Spacer(),
+          FactViewWidget(),
+          Spacer()
+        ],
+      ),
+    ));
   }
 }
 
-class MainWidget extends StatelessWidget {
-  final Fact fact;
+class TitleWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        flex: 1,
+        child: AutoSizeText(
+          S.of(context).title,
+          textAlign: TextAlign.center,
+          minFontSize: 20,
+          maxFontSize: 45,
+          style: TextStyle(
+              fontWeight: FontWeight.w300, color: Colors.white, fontSize: 45),
+        ));
+  }
+}
 
-  MainWidget(this.fact);
+class FactViewWidget extends StatefulWidget {
+  @override
+  _FactViewWidget createState() => _FactViewWidget();
+}
+
+class _FactViewWidget extends State<FactViewWidget> {
+  Future<Fact> _fact;
 
   @override
   Widget build(BuildContext context) {
     final _dbProvider = Provider.of<FavoriteDao>(context);
     final _viewModelProvider = Provider.of<ViewModel>(context);
+    setState(() {
+      _fact = _viewModelProvider.getRandomFact();
+    });
 
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.1),
-      child: Column(
-        children: <Widget>[
-          Spacer(),
-          Expanded(
-              flex: 1,
-              child: AutoSizeText(
-                S.of(context).title,
-                textAlign: TextAlign.center,
-                minFontSize: 20,
-                maxFontSize: 45,
-                style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white,
-                    fontSize: 45),
-              )),
-          Spacer(),
-          Expanded(
+    return FutureBuilder<Fact>(
+        future: _fact,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final fact = snapshot.data;
+          return Expanded(
               flex: 6,
               child: Center(
                   child: Container(
                       height: MediaQuery.of(context).size.height * 0.7,
                       width: MediaQuery.of(context).size.width * 0.95,
                       child: InkWell(
-                          onTap: () => _viewModelProvider.getRandomFact,
+                          onTap: () {
+                            setState(() {
+                              _fact = _viewModelProvider.getRandomFact();
+                            });
+                          },
                           child: Card(
                               child: Padding(
                             padding: EdgeInsets.all(
@@ -139,10 +145,7 @@ class MainWidget extends StatelessWidget {
                                     ))
                               ],
                             ),
-                          )))))),
-          Spacer()
-        ],
-      ),
-    );
+                          ))))));
+        });
   }
 }
