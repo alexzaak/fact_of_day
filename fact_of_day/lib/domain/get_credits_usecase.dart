@@ -3,10 +3,9 @@ import 'model/credit.dart';
 class GetCreditsUseCase {
   Future<List<Credit>> execute() {
     List<Credit> creditList = new List();
-    creditList.add(Credit(
-        "Random Useless Facts - API", "http://randomuselessfact.appspot.com"));
-    creditList.add(Credit("Icons made by Icon Pond",
-        "https://www.flaticon.com/authors/popcorns-arts"));
+    creditList.add(Credit("chucknorris.io", "https://api.chucknorris.io/"));
+    creditList.add(Credit("Chuck Approved PSD",
+        "https://www.vectorhq.com/psd/chuck-approved-psd-432875"));
     creditList.add(Credit(
         "Icons delivered by www.flaticon.com", "https://www.flaticon.com/"));
     creditList.add(Credit("Flutter", "https://flutter.dev"));

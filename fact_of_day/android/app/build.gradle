@@ -61,7 +61,7 @@ android {
     }
     buildTypes {
         debug {
-            resValue "string", 'app_name', "Fact of the day (dev)"
+            resValue "string", 'app_name', "(d) Chuck Norris Jokes"
 
             applicationIdSuffix ".debug"
 
@@ -71,7 +71,7 @@ android {
             }
         }
         release {
-            resValue "string", 'app_name', "Fact of the day"
+            resValue "string", 'app_name', "Chuck Norris Jokes"
 
             signingConfig signingConfigs.release
 
