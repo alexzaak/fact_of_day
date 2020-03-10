@@ -1,19 +1,17 @@
 class Fact {
+  final String id;
   final String text;
-  final String permalink;
   final String sourceUrl;
-  final String language;
-  final String source;
+  final String iconUrl;
 
-  Fact({this.text, this.permalink, this.sourceUrl, this.language, this.source});
+  Fact({this.id, this.text, this.iconUrl, this.sourceUrl});
 
   factory Fact.fromJson(Map<String, dynamic> json) {
     return Fact(
-      text: json['text'],
-      permalink: json['permalink'],
-      sourceUrl: json['source_url'],
-      language: json['language'],
-      source: json['source'],
+      id: json['id'],
+      text: json['value'],
+      iconUrl: json['icon_url'],
+      sourceUrl: json['url'],
     );
   }
 }

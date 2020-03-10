@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:fact_of_day/domain/model/fact.dart';
 import 'package:http/http.dart' as http;
 
-import '../domain/model/fact.dart';
-
-const baseUrl = "http://randomuselessfact.appspot.com";
+const baseUrl = "https://api.chucknorris.io";
 
 class FactRepository {
   Future<Fact> getRandomFact(String language) async {
-    var url = baseUrl + "/random.json?language=$language";
+    var url = baseUrl + "/jokes/random";
 
     final response = await http.get(url);
     if (response.statusCode == 200) {

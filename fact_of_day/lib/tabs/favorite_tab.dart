@@ -42,8 +42,8 @@ class FavoriteTab extends StatelessWidget {
 class MainWidget extends StatelessWidget {
   var _dbProvider;
 
-  onRemoveFavorite(String content) {
-    _dbProvider.deleteFavorite(content: content);
+  onRemoveFavorite(String id) {
+    _dbProvider.deleteFavorite(id: id);
   }
 
   final List<FavoriteData> favorites;
@@ -78,16 +78,15 @@ class MainWidget extends StatelessWidget {
 }
 
 class CustomWidget extends StatelessWidget {
+  final String id;
   final String content;
-
   final Icon trailingIconOne;
-
   final Icon trailingIconTwo;
-
   final CustomCallback onRemoveFavorite;
 
   CustomWidget(
-      {@required this.content,
+      {@required this.id,
+      @required this.content,
       @required this.trailingIconOne,
       @required this.trailingIconTwo,
       @required this.onRemoveFavorite});
@@ -120,7 +119,7 @@ class CustomWidget extends StatelessWidget {
                   new IconButton(
                       icon: trailingIconTwo,
                       onPressed: () {
-                        onRemoveFavorite(content);
+                        onRemoveFavorite(id);
                       }),
                 ],
               )

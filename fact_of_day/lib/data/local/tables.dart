@@ -32,24 +32,21 @@ class FavoriteDao extends DatabaseAccessor<Database> with _$FavoriteDaoMixin {
 
   Stream<List<FavoriteData>> get favoriteList => select(favorite).watch();
 
-  void addFavorite({String content, String permalink, String sourceUrl}) {
+  void addFavorite(
+      {String id, String content, String iconUrl, String sourceUrl}) {
     final _entry = FavoriteCompanion(
-        id: Value(content.hashCode.toString()),
+        id: Value(id),
         content: Value(content),
-        permalink: Value(permalink),
+        permalink: Value(sourceUrl),
         sourceUrl: Value(sourceUrl));
     into(favorite).insert(_entry);
   }
 
-  void deleteFavorite({String content}) {
-    final id = content.hashCode.toString();
-
+  void deleteFavorite({String id}) {
     (delete(favorite)..where((fav) => fav.id.equals(id))).go();
   }
 
-  Stream<FavoriteData> isFavorite(String content) {
-    final id = content.hashCode.toString();
-
+  Stream<FavoriteData> isFavorite(String id) {
     return (select(favorite)..where((fav) => fav.id.equals(id))).watchSingle();
   }
 }

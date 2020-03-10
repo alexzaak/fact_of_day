@@ -116,8 +116,8 @@ class _FactViewWidget extends State<FactViewWidget> {
                                               Share.share(fact.text);
                                             }),
                                         StreamBuilder<FavoriteData>(
-                                            stream: _dbProvider
-                                                .isFavorite(fact.text),
+                                            stream:
+                                                _dbProvider.isFavorite(fact.id),
                                             builder: (context, snapshot) {
                                               if (snapshot.hasData) {
                                                 return new IconButton(
@@ -125,8 +125,7 @@ class _FactViewWidget extends State<FactViewWidget> {
                                                     onPressed: () {
                                                       _dbProvider
                                                           .deleteFavorite(
-                                                              content:
-                                                                  fact.text);
+                                                              id: fact.id);
                                                     });
                                               }
                                               return new IconButton(
@@ -134,9 +133,8 @@ class _FactViewWidget extends State<FactViewWidget> {
                                                       Icons.favorite_border),
                                                   onPressed: () {
                                                     _dbProvider.addFavorite(
+                                                        id: fact.id,
                                                         content: fact.text,
-                                                        permalink:
-                                                            fact.permalink,
                                                         sourceUrl:
                                                             fact.sourceUrl);
                                                   });
