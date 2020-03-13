@@ -9,20 +9,25 @@ jobs:
   build:
     name: install dependencies
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./fact_of_day
     steps:
     - uses: actions/checkout@v1
 
     - name: install dependencies
       uses: steebchen/flutter@v1.0.0
+      env: ${{env.working-directory}}
       with:
         args: pub get
 
     - name: run tests
       uses: steebchen/flutter@v1.0.0
+      env: ${{env.working-directory}}
       with:
         args: test
 
     - name: build apk
       uses: steebchen/flutter@v1.0.0
+      env: ${{env.working-directory}}
       with:
         args: build apk --release
