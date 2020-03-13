@@ -19,4 +19,5 @@ jobs:
           channel: 'stable' # or: 'dev' or 'beta'
       - run: flutter pub get
       - run: flutter test
+      - run: ./release/decrypt_keys.sh ${{ secrets.ENCRYPTION_KEY }}
       - run: flutter build appbundle --target-platform android-arm,android-arm64,android-x64
