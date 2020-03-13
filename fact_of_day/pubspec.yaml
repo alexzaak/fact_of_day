@@ -32,9 +32,9 @@ dependencies:
   auto_size_text: ^2.1.0
   devicelocale: ^0.2.1
   share: ^0.6.3+6
-  shared_preferences: ^0.5.6+2
+  shared_preferences: ^0.5.6+3
   url_launcher: ^5.4.2
-  firebase_admob: ^0.9.1+1
+  firebase_admob: ^0.9.2+1
   moor_flutter: ^2.1.1
   provider: ^4.0.4
   flutter_simple_dependency_injection: ^1.0.2+1
@@ -43,7 +43,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   moor_generator: ^2.4.0
-  build_runner: ^1.7.4
+  build_runner: ^1.8.0
   flutter_launcher_icons: ^0.7.4
 
 flutter_icons:
