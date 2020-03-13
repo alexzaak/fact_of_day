@@ -32,7 +32,8 @@ class FavoriteData extends DataClass implements Insertable<FavoriteData> {
     );
   }
   factory FavoriteData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
     return FavoriteData(
       id: serializer.fromJson<String>(json['id']),
       content: serializer.fromJson<String>(json['content']),
@@ -41,8 +42,8 @@ class FavoriteData extends DataClass implements Insertable<FavoriteData> {
     );
   }
   @override
-  Map<String, dynamic> toJson(
-      {ValueSerializer serializer = const ValueSerializer.defaults()}) {
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'content': serializer.toJson<String>(content),
@@ -197,25 +198,25 @@ class $FavoriteTable extends Favorite
     final context = VerificationContext();
     if (d.id.present) {
       context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
-    } else if (id.isRequired && isInserting) {
+    } else if (isInserting) {
       context.missing(_idMeta);
     }
     if (d.content.present) {
       context.handle(_contentMeta,
           content.isAcceptableValue(d.content.value, _contentMeta));
-    } else if (content.isRequired && isInserting) {
+    } else if (isInserting) {
       context.missing(_contentMeta);
     }
     if (d.permalink.present) {
       context.handle(_permalinkMeta,
           permalink.isAcceptableValue(d.permalink.value, _permalinkMeta));
-    } else if (permalink.isRequired && isInserting) {
+    } else if (isInserting) {
       context.missing(_permalinkMeta);
     }
     if (d.sourceUrl.present) {
       context.handle(_sourceUrlMeta,
           sourceUrl.isAcceptableValue(d.sourceUrl.value, _sourceUrlMeta));
-    } else if (sourceUrl.isRequired && isInserting) {
+    } else if (isInserting) {
       context.missing(_sourceUrlMeta);
     }
     return context;
@@ -259,22 +260,10 @@ abstract class _$Database extends GeneratedDatabase {
   $FavoriteTable get favorite => _favorite ??= $FavoriteTable(this);
   FavoriteDao _favoriteDao;
   FavoriteDao get favoriteDao => _favoriteDao ??= FavoriteDao(this as Database);
-  Selectable<int> countFavQuery(String id) {
-    return customSelectQuery('SELECT COUNT(*) FROM favorite WHERE id = :id',
-        variables: [Variable.withString(id)],
-        readsFrom: {favorite}).map((QueryRow row) => row.readInt('COUNT(*)'));
-  }
-
-  Future<List<int>> countFav(String id) {
-    return countFavQuery(id).get();
-  }
-
-  Stream<List<int>> watchCountFav(String id) {
-    return countFavQuery(id).watch();
-  }
-
   @override
-  List<TableInfo> get allTables => [favorite];
+  Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
+  @override
+  List<DatabaseSchemaEntity> get allSchemaEntities => [favorite];
 }
 
 // **************************************************************************
