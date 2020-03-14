@@ -28,7 +28,7 @@ jobs:
           packageName: codes.zaak.fact_of_day
           releaseFile: /build/app/outputs/bundle/release/app.aab
           track: alpha
-          userFraction: 1.0
+          userFraction: 0.90
           whatsNewDirectory: /distribution/whatsnew
           mappingFile: /build/app/outputs/mapping/r8/release/mapping.txt
 
