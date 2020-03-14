@@ -21,3 +21,14 @@ jobs:
       - run: flutter test
       - run: ./release/decrypt_keys.sh ${{ secrets.ENCRYPTION_KEY }}
       - run: flutter build appbundle --target-platform android-arm,android-arm64,android-x64
+      - name: Upload Android Release to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: /android/service_account.json
+          packageName: codes.zaak.fact_of_day
+          releaseFile: /build/app/outputs/bundle/release/app.aab
+          track: alpha
+          userFraction: 1.0
+          whatsNewDirectory: /distribution/whatsnew
+          mappingFile: /build/app/outputs/mapping/r8/release/mapping.txt
+
